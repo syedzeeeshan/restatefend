@@ -1,0 +1,2 @@
+db/mongo/data/
+.env.prod

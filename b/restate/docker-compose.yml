@@ -1,0 +1,64 @@
+version: "3.9"
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost/api
+    depends_on:
+      - backend
+    networks: [appnet]
+
+  backend:
+    build: ./backend
+    command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      - DJANGO_SETTINGS_MODULE=realestate_backend.settings
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=realestate
+      - POSTGRES_USER=realuser
+      - POSTGRES_PASSWORD=realpass
+      - MONGO_URI=mongodb://mongo:27017
+      - MONGO_DB=realestate
+      - ALLOWED_HOSTS=*
+      - DEBUG=1
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - mongo
+    networks: [appnet]
+
+  postgres:
+    image: postgres:16
+    environment:
+      - POSTGRES_DB=realestate
+      - POSTGRES_USER=realuser
+      - POSTGRES_PASSWORD=realpass
+    volumes:
+      - ./db/postgres/data:/var/lib/postgresql/data
+      - ./db/postgres/init:/docker-entrypoint-initdb.d
+    networks: [appnet]
+
+  mongo:
+    image: mongo:7
+    volumes:
+      - ./db/mongo/data:/data/db
+    networks: [appnet]
+
+  proxy:
+    build: ./reverse-proxy
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+    networks: [appnet]
+
+networks:
+  appnet:
+    driver: bridge

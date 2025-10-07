@@ -1,0 +1,63 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ./b/restate
+    env_file:
+      - ./.env.prod
+    expose:
+      - 8000
+    depends_on:
+      - postgres
+      - mongo
+    volumes:
+      - static_volume:/app/staticfiles
+    networks:
+      - appnet
+
+  frontend:
+    build:
+      context: ./f/csc-app
+
+    networks:
+      - appnet
+
+  postgres:
+    image: postgres:16
+    env_file:
+      - ./.env.prod
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - appnet
+
+  mongo:
+    image: mongo:7
+    env_file:
+      - ./.env.prod
+    volumes:
+      - ./db/mongo/data:/data/db
+    networks:
+      - appnet
+
+  proxy:
+    build:
+      context: ./b/restate/reverse-proxy
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+    volumes:
+      - static_volume:/app/staticfiles
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  static_volume:

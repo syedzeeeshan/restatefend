@@ -1,0 +1,57 @@
+:root {
+  --color-bg-gradient: linear-gradient(135deg, #2ecc71, #1abc9c);
+  --color-surface: #ffffff;
+  --color-text: #333;
+  --shadow-light: rgba(255, 255, 255, 0.7);
+  --shadow-dark: rgba(0, 0, 0, 0.15);
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: var(--color-bg-gradient);
+  color: var(--color-text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.neumorphic {
+  background: var(--color-surface);
+  border-radius: 16px;
+  box-shadow:
+    8px 8px 16px var(--shadow-dark),
+    -8px -8px 16px var(--shadow-light);
+  transition: all 0.2s ease-in-out;
+}
+
+.neumorphic:active {
+  box-shadow:
+    inset 8px 8px 16px var(--shadow-dark),
+    inset -8px -8px 16px var(--shadow-light);
+}
+
+nav a {
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  transition: all 0.2s ease-in-out;
+}
+
+nav a:hover {
+  background: var(--color-bg-gradient);
+  color: white;
+  box-shadow:
+    4px 4px 8px var(--shadow-dark),
+    -4px -4px 8px var(--shadow-light);
+}
+
+nav h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
